@@ -1,39 +1,63 @@
-import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
-  function App() {
-   const [nome, setNome] = useState("");
-   const [email, setEmail] = useState("");
-   const [telefone, setTelefone] = useState("");
-  
-   const handleSubmit = (e) => {
-     e.preventDefault();
-      console.log({nome});
-      console.log({email});
-      console.log({telefone});
-   }
+function App() {
+  const { register,
+    handleSubmit,
+    formState: { errors },
+    reset } = useForm({ mode: 'onBlur' });
+  //Arrow Function
+  const onSubmit = (data) => {
 
-    return (
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>Nome:</label>
-          <input id='nome' type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
-          <br />
-          <label>Email:</label>
-          <input id='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <br />
-          <label>Telefone:</label>
-          <input id='telefone' type="tel" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-          <br />
-          <button type="submit">Enviar</button>
-          <br />
-          <label>{nome}</label>
-          <br />
-          <label>{email}</label>
-          <br />
-          <label>{telefone}</label>
-        </form>
-      </div>
-    )
+    alert("Formulário enviado: " + JSON.stringify(data));
+    console.log("Dados enviados com sucesso", data)
+    reset();
+
   }
-
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-blue-500">
+      <div>
+        <div className='bg-white/80 p-6 rounded-lg'>
+          <h1 className='text-3xl text-gray-800 mb-4'>Criando Formulários</h1>
+          <form className='space-y-2' onSubmit={handleSubmit(onSubmit)} noValidate>
+            <label className='block text-sm font-medium text-gray-700'>Nome </label>
+            <input
+              placeholder='Digite seu nome'
+              {...register("nome", { required: "O nome é obrigatório" })}
+              className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            />
+            {errors.nome && <p className='text-red-600 text-sm'>{errors.nome.message}</p>}
+            <br />
+            <label className='block text-sm font-medium text-gray-700'>Email </label>
+            <input placeholder='Digite seu email' type='email'
+              {...register("email", { required: "O email é obrigatório", pattern: { value: /^[^\s@]+@[^\s]+\.[^\s]+$/, message: "Email inválido" } })}
+              className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            />
+            {errors.email && <p style={{ color: "red" }}>{errors.email.message}</p>}<br />
+            <label className='block text-sm font-medium text-gray-700'> Senha </label>
+            <input placeholder='Digite sua senha' type='password'
+              {...register("senha", { required: "A senha é obrigatória", minLength: { value: 6, message: "A senha deve ter no mínimo 6 caracteres" } })}
+            className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            /><br />
+            {errors.senha && <p style={{ color: "red" }}>{errors.senha.message}</p>}
+            <label className='block text-sm font-medium text-gray-700'>Telefone </label>
+            <input placeholder='(XX)99999999' type='tel' //criar uma máscara, ajustar o placeholder
+              {...register("telefone", { required: "O telefone é obrigatório", pattern: { value: /^\(\d{2}\)\d{9}$/, message: "Telefone inválido" } })}
+            className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            /><br />
+            {errors.telefone && <p style={{ color: "red" }}>{errors.telefone.message}</p>}
+            <label className='block text-sm font-medium text-gray-700'>Data de Nascimento </label>
+            <input type='date'
+              {...register("dataNascimento", { required: "A data de nascimento é obrigatória" })}
+            className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            /><br />
+            {errors.dataNascimento && <p style={{ color: "red" }}>{errors.dataNascimento.message}</p>}
+            <div className='flex justify-center'> 
+            <button className="flex w-1/2 justify-center mt-2 p-3 bg-sky-500 hover:bg-sky-700 text-white rounded-lg" type='submit'>Enviar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default App;
